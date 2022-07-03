@@ -8,7 +8,7 @@ const verificar_token = require("../middleware/verificartoken");
 const { v4: uuidv4 } = require("uuid");
 const route = express.Router();
 
-const client = require("../client");
+const ProdutosFinanceiros = require("../produtosFinanceiros");
 
 route.get("/", (req, res) => {
   Usuario.find((erro, dados) => {
@@ -26,8 +26,11 @@ route.post("/cadastro", (req, res) => {
       return res
         .status(500)
         .send({ output: `Erra ao tentar gerar a senha -> ${erro}` });
+
     req.body.senha = result;
     req.body.apikey = uuidv4();
+
+    //TODO: check usuario ja cadastrado
 
     const dados = new Usuario(req.body);
     dados
@@ -54,14 +57,13 @@ route.post("/login", (req, res) => {
         return res
           .status(500)
           .send({ output: `Erro ao validar a senha ->${erro}` });
+
       if (!same) return res.status(400).send({ output: `Senha inválida` });
-      console.log(result.apikey);
+  
       Cliente.findOne({ apikey: result.apikey }, (error, cliente) => {
-        console.log(cliente);
+        
         if (error)
-          return res
-            .status(500)
-            .send({ output: `Erro interno apikey cliente -> ${error}` });
+          return res.status(500).send({ output: `Erro interno apikey cliente -> ${error}` });
 
         const gerar_token = criar_token(
           result._id,
@@ -76,9 +78,18 @@ route.post("/login", (req, res) => {
             apikey: result.apikey,
           });
         } else {
-          client.ListarTodos(null, (err, data) => {
+          ProdutosFinanceiros.getByIdCliente({"id_cliente": cliente._id}, (err, data) => {
             if (!err) {
-              res.status(200).send({ token: gerar_token, produtos: data });
+              let Cliente = {
+                _id: cliente._id,
+                nomecompleto: cliente.nomecompleto,
+                apikey: cliente.apikey,
+                email: cliente.email,
+                telefone: cliente.telefone,
+                endereco: cliente.endereco,
+                produtosFinanceiros: data.InfoFinanceiras
+              }
+              res.status(200).send({ token: gerar_token, Cliente});
             }
           });
         }
@@ -106,7 +117,7 @@ route.put("/atualizar/:id", verificar_token, (req, res) => {
   );
 });
 
-route.delete("/apagar/:id", (req, res) => {
+route.delete("/apagar/:id", verificar_token, (req, res) => {
   Usuario.findByIdAndDelete(req.params.id, (erro, dados) => {
     if (erro)
       return res
