@@ -4,13 +4,13 @@ const Usuario = require("../model/usuario");
 const Cliente = require("../model/cliente");
 const criar_token = require("../utils/criartoken");
 const cfg = require("../config/cfg");
-const verificar_token = require("../middleware/verificartoken");
+const {verificar_token, verificar_token_apikey} = require("../middleware/verificartoken");
 const { v4: uuidv4 } = require("uuid");
 const route = express.Router();
 
 const ProdutosFinanceiros = require("../produtosFinanceiros");
 
-route.get("/", (req, res) => {
+route.get("/", verificar_token_apikey, (req, res) => {
   Usuario.find((erro, dados) => {
     if (erro)
       return res
@@ -89,7 +89,7 @@ route.post("/login", (req, res) => {
                 endereco: cliente.endereco,
                 produtosFinanceiros: data.InfoFinanceiras
               }
-              res.status(200).send({ token: gerar_token, Cliente});
+              res.status(200).send({ token: gerar_token, apikey: cliente.apikey, Cliente});
             }
           });
         }
@@ -98,7 +98,7 @@ route.post("/login", (req, res) => {
   });
 });
 
-route.put("/atualizar/:id", verificar_token, (req, res) => {
+route.put("/atualizar/:id", verificar_token_apikey, (req, res) => {
   Usuario.findByIdAndUpdate(
     req.params.id,
     req.body,
@@ -117,7 +117,7 @@ route.put("/atualizar/:id", verificar_token, (req, res) => {
   );
 });
 
-route.delete("/apagar/:id", verificar_token, (req, res) => {
+route.delete("/apagar/:id", verificar_token_apikey, (req, res) => {
   Usuario.findByIdAndDelete(req.params.id, (erro, dados) => {
     if (erro)
       return res

@@ -1,10 +1,10 @@
 const express = require("express");
 const Cliente = require("../model/cliente");
-const verificar_token = require("../middleware/verificartoken");
+const {verificar_token, verificar_token_apikey} = require("../middleware/verificartoken");
 const ProdutosFinanceiros = require("../produtosFinanceiros");
 const route = express.Router();
 
-route.post("/cadastro", verificar_token, (req, res) => {
+route.post("/cadastro", verificar_token_apikey, (req, res) => {
   Cliente.findOne({ _id: req.body.id_cliente }, (erro, dados) => {
     if (erro) {
       return res
@@ -26,7 +26,7 @@ route.post("/cadastro", verificar_token, (req, res) => {
   });
 });
 
-route.put("/atualizar/:id", verificar_token, (req, res) => {
+route.put("/atualizar/:id", verificar_token_apikey, (req, res) => {
   Cliente.findOne({ _id: req.body.id_cliente }, (erro, dados) => {
     if (erro) {
       return res
@@ -55,7 +55,7 @@ route.put("/atualizar/:id", verificar_token, (req, res) => {
   });
 });
 
-route.delete("/deletar/:id", verificar_token, (req, res) => {
+route.delete("/deletar/:id", verificar_token_apikey, (req, res) => {
   Cliente.findOne({ _id: req.body.id_cliente }, (erro, dados) => {
     if (erro) {
       return res
@@ -79,7 +79,7 @@ route.delete("/deletar/:id", verificar_token, (req, res) => {
   });
 });
 
-route.get("/", verificar_token, (req, res) => {
+route.get("/", verificar_token_apikey, (req, res) => {
   ProdutosFinanceiros.get({}, (err, data) => {
     if (!err) {
       return res.status(200).send({ output: "ok", payload: data });

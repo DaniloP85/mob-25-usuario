@@ -1,10 +1,9 @@
 const express = require("express");
 const Cliente = require("../model/cliente");
-const verificar_token = require("../middleware/verificartoken");
-const ProdutosFinanceiros = require("../produtosFinanceiros");
+const {verificar_token, verificar_token_apikey} = require("../middleware/verificartoken");
 const route = express.Router();
 
-route.get("/", verificar_token, (req, res) => {
+route.get("/", verificar_token_apikey, (req, res) => {
   Cliente.find((erro, dados) => {
     if (erro)
       return res
@@ -17,9 +16,11 @@ route.get("/", verificar_token, (req, res) => {
 });
 
 route.post("/cadastro", verificar_token, (req, res) => {
+
+  //TODO: verificar se o cliente ja existe
+
   const dados = new Cliente(req.body);
 
-  //TODO: check clinte ja cadastrado
   dados
     .save()
     .then((result) => {
@@ -30,7 +31,7 @@ route.post("/cadastro", verificar_token, (req, res) => {
     );
 });
 
-route.put("/atualizar/:id", verificar_token, (req, res) => {
+route.put("/atualizar/:id", verificar_token_apikey, (req, res) => {
   Cliente.findByIdAndUpdate(
     req.params.id,
     req.body,
@@ -49,7 +50,7 @@ route.put("/atualizar/:id", verificar_token, (req, res) => {
   );
 });
 
-route.delete("/apagar/:id", verificar_token, (req, res) => {
+route.delete("/apagar/:id", verificar_token_apikey, (req, res) => {
   Cliente.findByIdAndDelete(req.params.id, (erro, dados) => {
     if (erro)
       return res
