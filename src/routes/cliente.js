@@ -18,6 +18,8 @@ route.get("/", verificar_token, (req, res) => {
 
 route.post("/cadastro", verificar_token, (req, res) => {
   const dados = new Cliente(req.body);
+
+  //TODO: check clinte ja cadastrado
   dados
     .save()
     .then((result) => {
