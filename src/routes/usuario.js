@@ -126,4 +126,5 @@ route.delete("/apagar/:id", verificar_token, (req, res) => {
     res.status(204).send({});
   });
 });
+
 module.exports = route;

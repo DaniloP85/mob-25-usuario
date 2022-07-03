@@ -58,28 +58,4 @@ route.delete("/apagar/:id", verificar_token, (req, res) => {
   });
 });
 
-
-//TODO: criar um outro arquivo para as rotas financeiras
-route.post("/financeiro/cadastro", verificar_token, (req, res) => {
-  Cliente.findOne({ _id: req.body.id_cliente }, (erro, dados) => {
-    if (erro) {
-      return res
-        .status(500)
-        .send({ output: `Erro ao tentar cadastrar -> ${erro}` });
-    }
-
-    if (dados === null) {
-      return res.status(204).send({ output: `Cliente nao localizado` });
-    }
-
-    const InfoFinanceiras = req.body;
-
-    ProdutosFinanceiros.insert(InfoFinanceiras, (err, data) => {
-      if (!err) {
-        return res.status(201).send({ output: "ok", payload: data });
-      }
-    });
-  });
-});
-
 module.exports = route;
