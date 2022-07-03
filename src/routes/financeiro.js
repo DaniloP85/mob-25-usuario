@@ -55,4 +55,28 @@ route.put("/atualizar/:id", verificar_token, (req, res) => {
   });
 });
 
+route.delete("/deletar/:id", verificar_token, (req, res) => {
+    Cliente.findOne({ _id: req.body.id_cliente }, (erro, dados) => {
+      if (erro) {
+        return res
+          .status(500)
+          .send({ output: `Erro ao tentar cadastrar -> ${erro}` });
+      }
+  
+      if (dados === null) {
+        return res.status(204).send({ output: `Cliente nao localizado` });
+      }
+  
+      const InfoFinanceiras = {
+        _id: req.params.id
+      };
+  
+      ProdutosFinanceiros.delete(InfoFinanceiras, (err, data) => {
+        if (!err) {
+          return res.status(202).send({ output: "ok", payload: {} });
+        }
+      });
+    });
+  });
+
 module.exports = route;
