@@ -5,5 +5,5 @@ const schema_usuario = new mongoose.Schema({
   senha: { type: String },
   apikey: { type: String, unique: true },
   criado: { type: Date, default: Date.now },
-});
+},{ strict: true, versionKey: false });
 module.exports = mongoose.model("Usuario", schema_usuario);
