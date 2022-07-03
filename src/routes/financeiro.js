@@ -79,4 +79,12 @@ route.delete("/deletar/:id", verificar_token, (req, res) => {
     });
   });
 
+  route.get("/", verificar_token, (req, res) => {  
+      ProdutosFinanceiros.get({}, (err, data) => {
+        if (!err) {
+          return res.status(200).send({ output: "ok", payload: data});
+        }
+      });
+  });
+
 module.exports = route;
