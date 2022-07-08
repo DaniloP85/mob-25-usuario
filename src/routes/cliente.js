@@ -1,22 +1,52 @@
 const express = require("express");
 const Cliente = require("../model/cliente");
-const {verificar_token, verificar_token_apikey} = require("../middleware/verificartoken");
+const {
+  verificar_token,
+  verificar_token_apikey,
+} = require("../middleware/verificartoken");
 const route = express.Router();
+const ProdutosFinanceiros = require("../produtosFinanceiros");
 
 route.get("/", verificar_token_apikey, (req, res) => {
-  Cliente.find((erro, dados) => {
+  Cliente.find((erro, usuarios) => {
     if (erro)
       return res
         .status(500)
         .send({ output: `Erro ao processar dados -> ${erro}` });
 
-        //TODO: arrumar um jeito de relacionar os clientes com as informacoes financeiras
-    res.status(200).send({ output: "ok", payload: dados });
+    ProdutosFinanceiros.get({}, (err, data) => {
+      if (!err) {
+        let resultadoConsolidado = [];
+        for (let i = 0; i < usuarios.length; i++) {
+          const { _id, nomecompleto, apikey, email, telefone, endereco } =
+            usuarios[i];
+          let produtosFinanceiros = [];
+          
+          for (let j = 0; j < data.InfoFinanceiras.length; j++) {
+            const produto = data.InfoFinanceiras[j];
+
+            if (produto.id_cliente === _id.toString()) {
+              produtosFinanceiros.push(produto);
+            }
+          }
+          resultadoConsolidado.push({
+            _id,
+            nomecompleto,
+            apikey,
+            email,
+            telefone,
+            endereco,
+            produtosFinanceiros,
+          });
+        }
+
+        res.status(200).send({ output: "ok", payload: resultadoConsolidado });
+      }
+    });
   });
 });
 
 route.post("/cadastro", verificar_token, (req, res) => {
-
   //TODO: verificar se o cliente ja existe
 
   const dados = new Cliente(req.body);
