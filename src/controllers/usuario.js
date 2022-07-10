@@ -22,24 +22,26 @@ const controller = {
         return res
           .status(500)
           .send({ output: `Erra ao tentar gerar a senha -> ${erro}` });
-  
+
       req.body.senha = result;
       req.body.apikey = uuidv4();
-  
+
       //TODO: check if the user is registered
-  
+
       const dados = new Usuario(req.body);
       dados
         .save()
         .then((result) => {
-          res.status(201).send({ output: "Cadastro realizado", payload: result });
+          res
+            .status(201)
+            .send({ output: "Cadastro realizado", payload: result });
         })
         .catch((erro) =>
           res.status(500).send({ output: `Erro ao cadastrar -> ${erro}` })
         );
     });
   },
-  login:(req, res) => {
+  login: (req, res) => {
     Usuario.findOne({ nomeusuario: req.body.nomeusuario }, (erro, result) => {
       if (erro)
         return res
@@ -52,14 +54,15 @@ const controller = {
           return res
             .status(500)
             .send({ output: `Erro ao validar a senha ->${erro}` });
-  
+
         if (!same) return res.status(400).send({ output: `Senha inválida` });
-    
+
         Cliente.findOne({ apikey: result.apikey }, (error, cliente) => {
-          
           if (error)
-            return res.status(500).send({ output: `Erro interno apikey cliente -> ${error}` });
-  
+            return res
+              .status(500)
+              .send({ output: `Erro interno apikey cliente -> ${error}` });
+
           const gerar_token = criar_token(
             result._id,
             result.usuario,
@@ -73,26 +76,35 @@ const controller = {
               apikey: result.apikey,
             });
           } else {
-            ProdutosFinanceiros.getByIdCliente({"id_cliente": cliente._id}, (err, data) => {
-              if (!err) {
-                let Cliente = {
-                  _id: cliente._id,
-                  nomecompleto: cliente.nomecompleto,
-                  apikey: cliente.apikey,
-                  email: cliente.email,
-                  telefone: cliente.telefone,
-                  endereco: cliente.endereco,
-                  produtosFinanceiros: data.InfoFinanceiras
+            ProdutosFinanceiros.getByIdCliente(
+              { id_cliente: cliente._id },
+              (err, data) => {
+                if (!err) {
+                  let Cliente = {
+                    _id: cliente._id,
+                    nomecompleto: cliente.nomecompleto,
+                    apikey: cliente.apikey,
+                    email: cliente.email,
+                    telefone: cliente.telefone,
+                    endereco: cliente.endereco,
+                    produtosFinanceiros: data.InfoFinanceiras,
+                  };
+                  res
+                    .status(200)
+                    .send({
+                      token: gerar_token,
+                      apikey: cliente.apikey,
+                      Cliente,
+                    });
                 }
-                res.status(200).send({ token: gerar_token, apikey: cliente.apikey, Cliente});
               }
-            });
+            );
           }
         });
       });
     });
   },
-  update:(req, res) => {
+  update: (req, res) => {
     Usuario.findByIdAndUpdate(
       req.params.id,
       req.body,
@@ -116,10 +128,10 @@ const controller = {
         return res
           .status(500)
           .send({ output: `Erro ao tentar apagar -> ${erro}` });
-  
+
       res.status(200).send({});
     });
-  }
+  },
 };
 
 module.exports = controller;
