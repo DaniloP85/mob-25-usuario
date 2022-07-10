@@ -15,12 +15,13 @@ install [Node.js](https://nodejs.org/en/), [MongoDB](https://www.mongodb.com)
 
 * Node.js
 * MongoDB
+* Application built with [gRPC](https://github.com/DaniloP85/mob-25-info-financeiras)
 
 ### Installing
 
 * clone this repository
 ```
-git clone git@github.com:DaniloP85/mob-25-info-financeiras.git
+git clone git@github.com:DaniloP85/mob-25-usuario.git
 ```
 * Install all dependencies
 ```
@@ -34,9 +35,10 @@ npm install --verbose
 npm start
 ```
 
-after that, it will be necessary to have some tool that makes requests gRPC.
 
-For testing purposes I used [Insonmia](https://github.com/DaniloP85/mob-25-fiap), but you can use whatever you think is best.
+For the correct functioning of the application it is necessary to connect another project, which was also built for this academic work.
+
+The connection is made at login and at all endpoints, from the customer's financial management.
 
 ## Authors
 
@@ -52,4 +54,4 @@ This project is licensed under the MT License - see the [LICENSE.md](LICENSE.md)
 
 ## Acknowledgments
 
-* [edilsonsilva](https://github.com/edilsonsilva/exemplogrpc)
+* [edilsonsilva](https://github.com/edilsonsilva/prmicro)
