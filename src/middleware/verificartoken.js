@@ -32,17 +32,17 @@ const verificar_token_apikey = (req, res, next) => {
     if (dados === null) {
       return res.status(401).send({ output: `Não autorizado` });
     }
-  });
 
-  jwt.verify(token, cfg.jwt_secret, (erro, result) => {
-    if (erro)
-      return res.status(401).send({ output: `Token inválido -> ${erro}` });
-    req.data = {
-      id: result.id,
-      user: result.nomeusuario,
-      email: result.email,
-    };
-    next();
+    jwt.verify(token, cfg.jwt_secret, (erro, result) => {
+      if (erro)
+        return res.status(401).send({ output: `Token inválido -> ${erro}` });
+      req.data = {
+        id: result.id,
+        user: result.nomeusuario,
+        email: result.email,
+      };
+      next();
+    });
   });
 };
 
