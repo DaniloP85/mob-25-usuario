@@ -6,7 +6,7 @@ const {
 } = require("../middleware/verificartoken");
 const route = express.Router();
 const ProdutosFinanceiros = require("../produtosFinanceiros");
-const usuario = require("../model/usuario");
+
 
 route.get("/", verificar_token_apikey, (req, res) => {
   Cliente.find((erro, usuarios) => {
@@ -43,18 +43,25 @@ route.get("/", verificar_token_apikey, (req, res) => {
 });
 
 route.post("/cadastro", verificar_token, (req, res) => {
-  //TODO: verificar se o cliente ja existe
+  Cliente.find({ apikey: req.body.apikey },(erro, cliente) => {
+    if (erro)
+      return res.status(500).send({ output: `Erro ao tentar localizar -> ${erro}` });
 
-  const dados = new Cliente(req.body);
+    if (cliente.length != 0){
+      return res.status(409).send({ output: "ok", payload: 'cliente ja cadastrado' });
+    }
 
-  dados
-    .save()
-    .then((result) => {
-      res.status(201).send({ output: "Cadastro realizado", payload: result });
-    })
-    .catch((erro) =>
-      res.status(500).send({ output: `Erro ao cadastrar -> ${erro}` })
-    );
+    const dados = new Cliente(req.body);
+
+    dados
+      .save()
+      .then((result) => {
+        res.status(201).send({ output: "Cadastro realizado", payload: result });
+      })
+      .catch((erro) =>
+        res.status(500).send({ output: `Erro ao cadastrar -> ${erro}` })
+      );
+  });
 });
 
 route.put("/atualizar/:id", verificar_token_apikey, (req, res) => {
