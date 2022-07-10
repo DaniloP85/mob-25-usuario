@@ -123,7 +123,8 @@ route.delete("/apagar/:id", verificar_token_apikey, (req, res) => {
       return res
         .status(500)
         .send({ output: `Erro ao tentar apagar -> ${erro}` });
-    res.status(204).send({});
+
+    res.status(200).send({});
   });
 });
 
