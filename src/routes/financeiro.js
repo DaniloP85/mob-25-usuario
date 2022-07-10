@@ -63,10 +63,6 @@ route.delete("/deletar/:id", verificar_token_apikey, (req, res) => {
         .send({ output: `Erro ao tentar cadastrar -> ${erro}` });
     }
 
-    if (dados === null) {
-      return res.status(204).send({ output: `Cliente nao localizado` });
-    }
-
     const InfoFinanceiras = {
       _id: req.params.id,
     };
