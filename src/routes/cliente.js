@@ -6,6 +6,7 @@ const {
 } = require("../middleware/verificartoken");
 const route = express.Router();
 const ProdutosFinanceiros = require("../produtosFinanceiros");
+const usuario = require("../model/usuario");
 
 route.get("/", verificar_token_apikey, (req, res) => {
   Cliente.find((erro, usuarios) => {
@@ -16,20 +17,15 @@ route.get("/", verificar_token_apikey, (req, res) => {
 
     ProdutosFinanceiros.get({}, (err, data) => {
       if (!err) {
-        let resultadoConsolidado = [];
-        for (let i = 0; i < usuarios.length; i++) {
+        let consolidado = usuarios.map((usuario) => {
           const { _id, nomecompleto, apikey, email, telefone, endereco } =
-            usuarios[i];
-          let produtosFinanceiros = [];
-          
-          for (let j = 0; j < data.InfoFinanceiras.length; j++) {
-            const produto = data.InfoFinanceiras[j];
+            usuario;
 
-            if (produto.id_cliente === _id.toString()) {
-              produtosFinanceiros.push(produto);
-            }
-          }
-          resultadoConsolidado.push({
+          const produtosFinanceiros = data.InfoFinanceiras.filter((produto) => {
+            return produto.id_cliente === _id.toString();
+          });
+
+          return {
             _id,
             nomecompleto,
             apikey,
@@ -37,10 +33,10 @@ route.get("/", verificar_token_apikey, (req, res) => {
             telefone,
             endereco,
             produtosFinanceiros,
-          });
-        }
+          };
+        });
 
-        res.status(200).send({ output: "ok", payload: resultadoConsolidado });
+        res.status(200).send({ output: "ok", payload: consolidado });
       }
     });
   });
