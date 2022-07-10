@@ -69,7 +69,7 @@ route.delete("/deletar/:id", verificar_token_apikey, (req, res) => {
 
     ProdutosFinanceiros.delete(InfoFinanceiras, (err, data) => {
       if (!err) {
-        return res.status(202).send({ output: "ok", payload: {} });
+        return res.status(200).send({ output: "ok", payload: {} });
       }
     });
   });
