@@ -1,14 +1,19 @@
 {
   "name": "mob-25-usuario",
   "version": "1.0.0",
-  "description": "",
+  "description": "Communicate different microservices using different protocols with Node.js",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon app.js"
   },
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "js",
+    "gRPC",
+    "RPC",
+    "nodejs"
+  ],
+  "author": "Danilo Santos <danilopsnts@gmaill.com> (https://www.linkedin.com/in/danilopsnts)",
+  "license": "MIT",
   "dependencies": {
     "@grpc/proto-loader": "^0.6.13",
     "bcrypt": "^5.0.1",

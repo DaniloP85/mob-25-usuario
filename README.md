@@ -42,7 +42,6 @@ The connection is made at login and at all endpoints, from the customer's financ
 
 ## Authors
 
-Danilo Santos
 [@danilopsnts](https://www.linkedin.com/in/danilopsnts/)
 
 ## Contributing
